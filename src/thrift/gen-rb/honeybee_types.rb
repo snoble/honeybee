@@ -6,7 +6,7 @@
 
 
 module Honeybee
-    module ComparisonRelationship
+    module NumericalComparison
       EQUAL = 1
       NOTEQUAL = 2
       LESSTHAN = 3
@@ -17,18 +17,32 @@ module Honeybee
       VALID_VALUES = Set.new([EQUAL, NOTEQUAL, LESSTHAN, LESSTHANOREQUAL, GREATERTHAN, GREATERTHANOREQUAL]).freeze
     end
 
+    module StringComparison
+      EQUAL = 1
+      NOTEQUAL = 2
+      LESSTHAN = 3
+      LESSTHANOREQUAL = 4
+      GREATERTHAN = 5
+      GREATERTHANOREQUAL = 6
+      VALUE_MAP = {1 => "EQUAL", 2 => "NOTEQUAL", 3 => "LESSTHAN", 4 => "LESSTHANOREQUAL", 5 => "GREATERTHAN", 6 => "GREATERTHANOREQUAL"}
+      VALID_VALUES = Set.new([EQUAL, NOTEQUAL, LESSTHAN, LESSTHANOREQUAL, GREATERTHAN, GREATERTHANOREQUAL]).freeze
+    end
+
+    module BooleanComparison
+      EQUAL = 1
+      NOTEQUAL = 2
+      VALUE_MAP = {1 => "EQUAL", 2 => "NOTEQUAL"}
+      VALID_VALUES = Set.new([EQUAL, NOTEQUAL]).freeze
+    end
+
     class Action
       include ::Thrift::Struct, ::Thrift::Struct_Union
       ADDTOCONSTANT = 1
-      ADDTOCOEFICIENT = 2
-      ADDIDENTIFIER = 3
-      SETIDENTIFIER = 4
+      ADDTOCOEFFICIENT = 2
 
       FIELDS = {
         ADDTOCONSTANT => {:type => ::Thrift::Types::DOUBLE, :name => 'addToConstant'},
-        ADDTOCOEFICIENT => {:type => ::Thrift::Types::MAP, :name => 'addToCoeficient', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::DOUBLE}},
-        ADDIDENTIFIER => {:type => ::Thrift::Types::STRING, :name => 'addIdentifier'},
-        SETIDENTIFIER => {:type => ::Thrift::Types::STRING, :name => 'setIdentifier'}
+        ADDTOCOEFFICIENT => {:type => ::Thrift::Types::MAP, :name => 'addToCoefficient', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::DOUBLE}}
       }
 
       def struct_fields; FIELDS; end
@@ -39,30 +53,93 @@ module Honeybee
       ::Thrift::Struct.generate_accessors self
     end
 
-    class ComparisonValue < ::Thrift::Union
-      include ::Thrift::Struct_Union
-      class << self
-        def stringValue(val)
-          ComparisonValue.new(:stringValue, val)
-        end
+    class NumericalRestriction
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      COMPARISON = 1
+      VALUE = 2
 
-        def numericalValue(val)
-          ComparisonValue.new(:numericalValue, val)
-        end
+      FIELDS = {
+        COMPARISON => {:type => ::Thrift::Types::I32, :name => 'comparison', :enum_class => Honeybee::NumericalComparison},
+        VALUE => {:type => ::Thrift::Types::DOUBLE, :name => 'value'}
+      }
 
-        def booleanValue(val)
-          ComparisonValue.new(:booleanValue, val)
+      def struct_fields; FIELDS; end
+
+      def validate
+        unless @comparison.nil? || Honeybee::NumericalComparison::VALID_VALUES.include?(@comparison)
+          raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Invalid value of field comparison!')
         end
       end
 
-      STRINGVALUE = 1
-      NUMERICALVALUE = 2
-      BOOLEANVALUE = 3
+      ::Thrift::Struct.generate_accessors self
+    end
+
+    class StringRestriction
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      COMPARISON = 1
+      VALUE = 2
 
       FIELDS = {
-        STRINGVALUE => {:type => ::Thrift::Types::STRING, :name => 'stringValue'},
-        NUMERICALVALUE => {:type => ::Thrift::Types::DOUBLE, :name => 'numericalValue'},
-        BOOLEANVALUE => {:type => ::Thrift::Types::BOOL, :name => 'booleanValue'}
+        COMPARISON => {:type => ::Thrift::Types::I32, :name => 'comparison', :enum_class => Honeybee::StringComparison},
+        VALUE => {:type => ::Thrift::Types::STRING, :name => 'value'}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+        unless @comparison.nil? || Honeybee::StringComparison::VALID_VALUES.include?(@comparison)
+          raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Invalid value of field comparison!')
+        end
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
+    class BooleanRestriction
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      COMPARISON = 1
+      VALUE = 2
+
+      FIELDS = {
+        COMPARISON => {:type => ::Thrift::Types::I32, :name => 'comparison', :enum_class => Honeybee::BooleanComparison},
+        VALUE => {:type => ::Thrift::Types::BOOL, :name => 'value'}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+        unless @comparison.nil? || Honeybee::BooleanComparison::VALID_VALUES.include?(@comparison)
+          raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Invalid value of field comparison!')
+        end
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
+    class Restriction < ::Thrift::Union
+      include ::Thrift::Struct_Union
+      class << self
+        def numericalRestriction(val)
+          Restriction.new(:numericalRestriction, val)
+        end
+
+        def stringRestriction(val)
+          Restriction.new(:stringRestriction, val)
+        end
+
+        def booleanRestriction(val)
+          Restriction.new(:booleanRestriction, val)
+        end
+      end
+
+      NUMERICALRESTRICTION = 1
+      STRINGRESTRICTION = 2
+      BOOLEANRESTRICTION = 3
+
+      FIELDS = {
+        NUMERICALRESTRICTION => {:type => ::Thrift::Types::STRUCT, :name => 'numericalRestriction', :class => Honeybee::NumericalRestriction},
+        STRINGRESTRICTION => {:type => ::Thrift::Types::STRUCT, :name => 'stringRestriction', :class => Honeybee::StringRestriction},
+        BOOLEANRESTRICTION => {:type => ::Thrift::Types::STRUCT, :name => 'booleanRestriction', :class => Honeybee::BooleanRestriction}
       }
 
       def struct_fields; FIELDS; end
@@ -74,33 +151,12 @@ module Honeybee
       ::Thrift::Union.generate_accessors self
     end
 
-    class Comparison
-      include ::Thrift::Struct, ::Thrift::Struct_Union
-      RELATIONSHIP = 1
-      VALUE = 2
-
-      FIELDS = {
-        RELATIONSHIP => {:type => ::Thrift::Types::I32, :name => 'relationship', :enum_class => Honeybee::ComparisonRelationship},
-        VALUE => {:type => ::Thrift::Types::STRUCT, :name => 'value', :class => Honeybee::ComparisonValue}
-      }
-
-      def struct_fields; FIELDS; end
-
-      def validate
-        unless @relationship.nil? || Honeybee::ComparisonRelationship::VALID_VALUES.include?(@relationship)
-          raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Invalid value of field relationship!')
-        end
-      end
-
-      ::Thrift::Struct.generate_accessors self
-    end
-
     class SatisfiesAll
       include ::Thrift::Struct, ::Thrift::Struct_Union
       SATISFIESALL = 1
 
       FIELDS = {
-        SATISFIESALL => {:type => ::Thrift::Types::LIST, :name => 'satisfiesAll', :element => {:type => ::Thrift::Types::STRUCT, :class => Honeybee::Comparison}}
+        SATISFIESALL => {:type => ::Thrift::Types::LIST, :name => 'satisfiesAll', :element => {:type => ::Thrift::Types::STRUCT, :class => Honeybee::Restriction}}
       }
 
       def struct_fields; FIELDS; end
