@@ -3,7 +3,7 @@ namespace rb honeybee
 
 struct Action {
   1: double addToConstant,
-  2: map<string, double> addToCoeficient
+  2: map<string, double> addToCoefficient
 }
 
 enum ComparisonRelationship {
