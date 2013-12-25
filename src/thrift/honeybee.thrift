@@ -6,7 +6,7 @@ struct Action {
   2: map<string, double> addToCoefficient
 }
 
-enum ComparisonRelationship {
+enum NumericalComparison {
   EQUAL = 1,
   NOTEQUAL = 2,
   LESSTHAN = 3,
@@ -15,19 +15,43 @@ enum ComparisonRelationship {
   GREATERTHANOREQUAL = 6
 }
 
-union ComparisonValue {
-  1: string stringValue,
-  2: double numericalValue,
-  3: bool booleanValue
+enum StringComparison {
+  EQUAL = 1,
+  NOTEQUAL = 2,
+  LESSTHAN = 3,
+  LESSTHANOREQUAL = 4,
+  GREATERTHAN = 5,
+  GREATERTHANOREQUAL = 6
 }
 
-struct Comparison {
-  1: ComparisonRelationship relationship,
-  2: ComparisonValue value
+enum BooleanComparison {
+  EQUAL = 1,
+  NOTEQUAL = 2,
+}
+
+struct NumericalRestriction {
+  1: NumericalComparison comparison,
+  2: double value
+}
+
+struct StringRestriction {
+  1: StringComparison comparison,
+  2: string value
+}
+
+struct BooleanRestriction {
+  1: BooleanComparison comparison,
+  2: bool value
+}
+
+union Restriction {
+  1: NumericalRestriction numericalRestriction,
+  2: StringRestriction stringRestriction,
+  3: BooleanRestriction booleanRestriction
 }
 
 struct SatisfiesAll {
-  1: list<Comparison> satisfiesAll
+  1: list<Restriction> satisfiesAll
 }
 
 struct SingleFeatureRule {
