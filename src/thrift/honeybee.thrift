@@ -1,5 +1,5 @@
 namespace java honeybee
-namespace rb honeybee
+namespace rb Honeybee
 
 struct Action {
   1: double addToConstant,
@@ -7,26 +7,26 @@ struct Action {
 }
 
 enum NumericalComparison {
-  EQUAL = 1,
-  NOTEQUAL = 2,
-  LESSTHAN = 3,
-  LESSTHANOREQUAL = 4,
-  GREATERTHAN = 5,
-  GREATERTHANOREQUAL = 6
+  EQUAL=1,
+  NOTEQUAL=2,
+  LESSTHAN=3,
+  LESSTHANOREQUAL=4,
+  GREATERTHAN=5,
+  GREATERTHANOREQUAL=6
 }
 
 enum StringComparison {
-  EQUAL = 1,
-  NOTEQUAL = 2,
-  LESSTHAN = 3,
-  LESSTHANOREQUAL = 4,
-  GREATERTHAN = 5,
-  GREATERTHANOREQUAL = 6
+  EQUAL=1,
+  NOTEQUAL=2,
+  LESSTHAN=3,
+  LESSTHANOREQUAL=4,
+  GREATERTHAN=5,
+  GREATERTHANOREQUAL=6
 }
 
 enum BooleanComparison {
-  EQUAL = 1,
-  NOTEQUAL = 2,
+  EQUAL=1,
+  NOTEQUAL=2,
 }
 
 struct NumericalRestriction {
@@ -63,6 +63,15 @@ struct Rule {
   1: list<SingleFeatureRule> singleFeatureRules
 }
 
-struct Scorer {
-  1: map<Rule, list<Action>> scorer
+struct PredictiveModel {
+  1: map<Rule, Action> model
+}
+
+union NumericalOrNominal {
+  1: double numerical,
+  2: string nominal
+}
+
+service Scorer {
+  double score(1: PredictiveModel model, 2: map<string, NumericalOrNominal> value)
 }
