@@ -54,17 +54,20 @@ struct SatisfiesAll {
   1: list<Restriction> satisfiesAll
 }
 
-struct SingleFeatureRule {
+struct Rule {
   1: string feature,
   2: list<SatisfiesAll> satisfiesOne
+  3: list<string> consequences
+  4: Action action
 }
 
-struct Rule {
-  1: list<SingleFeatureRule> singleFeatureRules
+struct RuleDictionary {
+  1: map<string, Rule> ruleDictionary
 }
 
 struct PredictiveModel {
-  1: map<Rule, Action> model
+  1: list<string> roots
+  2: RuleDictionary dictionary
 }
 
 union NumericalOrNominal {
@@ -73,5 +76,6 @@ union NumericalOrNominal {
 }
 
 service Scorer {
-  double score(1: PredictiveModel model, 2: map<string, NumericalOrNominal> value)
+  double scoreRow(1: PredictiveModel model, 2: map<string, NumericalOrNominal> row)
+  list<double> scoreRows(1: PredictiveModel model, 2: list<map<string, NumericalOrNominal>> rows)
 }
