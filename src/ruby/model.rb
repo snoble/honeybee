@@ -42,24 +42,24 @@ end
 
 [
   {
-    :feature => 'a'
+    :feature => 'a',
     :satisfies => [{Honeybee::NumericalComparison::EQUAL => nil}, {Honeybee::NumericalComparison::LESSTHANOREQUAL => 0}],
     :children => [
       {
-        :feature => 'b'
-        :satisfies => [{Honeybee::NumericalComparison::EQUAL => nil}, {Honeybee::NumericalComparison::LESSTHANOREQUAL => 0}]
+        :feature => 'b',
+        :satisfies => [{Honeybee::NumericalComparison::EQUAL => nil}, {Honeybee::NumericalComparison::LESSTHANOREQUAL => 0}],
         :action => {:constant => 25}
       },
       {
-        :feature => 'b'
-        :satisfies => [{Honeybee::NumericalComparison::NOTEQUAL => nil, Honeybee::NumericalComparison::GREATERTHAN => 0}]
+        :feature => 'b',
+        :satisfies => [{Honeybee::NumericalComparison::NOTEQUAL => nil, Honeybee::NumericalComparison::GREATERTHAN => 0}],
         :action => {:constant => -30}
       }
     ]
   },
   {
-    :feature => 'a'
-    :satisfies => [{Honeybee::NumericalComparison::NOTEQUAL => nil, Honeybee::NumericalComparison::GREATERTHAN => 0}]
+    :feature => 'a',
+    :satisfies => [{Honeybee::NumericalComparison::NOTEQUAL => nil, Honeybee::NumericalComparison::GREATERTHAN => 0}],
     :action => {:coefficients => {'b' => 2}}
   }
 ]
